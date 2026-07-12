@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Checks if the authenticated parent has an accepted connection to this student
+    function isApprovedParent(studentId) {
+      return isAuthenticated() && 
+        request.auth.token.email != null &&
+        exists(/databases/$(database)/documents/parent_connections/$(studentId + "_" + request.auth.token.email.toLowerCase().replace("@", "_").replace(".", "_"))) &&
+        get(/databases/$(database)/documents/parent_connections/$(studentId + "_" + request.auth.token.email.toLowerCase().replace("@", "_").replace(".", "_"))).data.status == "accepted";
+    }
+
+    // Checks parent permissions dynamically
+    function parentHasPermission(studentId, permissionName) {
+      return isApprovedParent(studentId) && 
+        get(/databases/$(database)/documents/parent_connections/$(studentId + "_" + request.auth.token.email.toLowerCase().replace("@", "_").replace(".", "_"))).data.permissions[permissionName] == true;
+    }
+
+    // Rules for Parent Connections mapping
+    match /parent_connections/{connectionId} {
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      allow read: if isAuthenticated() && (
+        resource.data.studentId == request.auth.uid || 
+        (request.auth.token.email != null && resource.data.parentEmail == request.auth.token.email)
+      );
+      allow update: if isAuthenticated() && (
+        // Student can revoke/update connection
+        resource.data.studentId == request.auth.uid ||
+        // Parent can accept connection (only modifying status)
+        (request.auth.token.email != null && 
+         resource.data.parentEmail == request.auth.token.email && 
+         request.resource.data.status == "accepted")
+      );
+      allow delete: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+    }
+
+    // Rules for User profiles and nested financial data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // Liquid accounts subcollection
+      match /accounts/{accountId} {
+        allow read: if isOwner(userId) || isApprovedParent(userId);
+        allow write: if isOwner(userId);
+      }
+
+      // Ledger transactions subcollection
+      match /transactions/{transactionId} {
+        allow read: if isOwner(userId) || parentHasPermission(userId, "viewLedger");
+        allow write: if isOwner(userId);
+      }
+
+      // Monthly budgets subcollection
+      match /budgets/{budgetId} {
+        allow read: if isOwner(userId) || parentHasPermission(userId, "viewBudgets");
+        allow write: if isOwner(userId);
+      }
+
+      // Savings Goals vaults subcollection
+      match /savings_goals/{goalId} {
+        allow read: if isOwner(userId) || parentHasPermission(userId, "viewSavings");
+        allow write: if isOwner(userId);
+      }
+
+      // Education Loans subcollection
+      match /loans/{loanId} {
+        allow read: if isOwner(userId) || parentHasPermission(userId, "viewLoans");
+        allow write: if isOwner(userId);
+      }
+
+      // Alert thresholds settings
+      match /alert_thresholds/{alertId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+  }
+}
