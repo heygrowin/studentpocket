@@ -157,11 +157,7 @@ export default function DashboardLayout({
       <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border bg-card/40 backdrop-blur-md">
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center px-6 mb-8 space-x-3">
-            <img src="/logo.png" alt="Student Pocket Logo" className="h-9 w-9 object-contain rounded-lg shadow bg-card" />
-            <div>
-              <h1 className="font-bold text-sm leading-tight tracking-tight">Student Pocket</h1>
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase font-semibold">Beta Version</p>
-            </div>
+            <img src="/logo.png" alt="Logo" className="h-10 w-10 object-contain rounded-lg shadow-sm" />
           </div>
 
           {/* Navigation Links */}
@@ -285,8 +281,7 @@ export default function DashboardLayout({
               </div>
 
               <div className="flex items-center px-6 mb-8 space-x-3">
-                <img src="/logo.png" alt="Student Pocket Logo" className="h-8 w-8 object-contain rounded-md bg-card" />
-                <h1 className="font-bold text-sm leading-tight">Student Pocket</h1>
+                <img src="/logo.png" alt="Logo" className="h-9 w-9 object-contain rounded-md bg-card" />
               </div>
 
               <nav className="flex-1 px-4 space-y-1 overflow-y-auto">

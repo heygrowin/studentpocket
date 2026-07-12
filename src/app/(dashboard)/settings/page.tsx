@@ -17,7 +17,8 @@ import {
   Plus,
   X,
   Sparkles,
-  GraduationCap
+  GraduationCap,
+  Shield
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -26,6 +27,7 @@ export default function SettingsPage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [addingThreshold, setAddingThreshold] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   
   // Local state for currency
   const [selectedCurrency, setSelectedCurrency] = useState(profile?.currency || "INR");
@@ -308,6 +310,27 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Legal & Privacy Card */}
+      <div className="glass border border-border bg-card/45 backdrop-blur-md rounded-2xl p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center">
+              <Shield className="h-4 w-4 mr-1.5 text-indigo-400" />
+              Legal & Privacy
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              View our privacy policy, data handling practices, and transparency details.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowPrivacyModal(true)}
+            className="inline-flex items-center justify-center rounded-lg bg-zinc-800 text-white dark:bg-zinc-200 dark:text-black px-5 py-2.5 text-xs font-bold shadow-md transition-all cursor-pointer shrink-0 hover:scale-[1.01]"
+          >
+            View Privacy Policy
+          </button>
+        </div>
+      </div>
+
       {showGuideModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div
@@ -398,6 +421,65 @@ export default function SettingsPage() {
                 className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/95 shadow-md transition-colors cursor-pointer"
               >
                 Close Guide
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPrivacyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm"
+            onClick={() => setShowPrivacyModal(false)}
+          />
+          <div className="glass relative w-full max-w-2xl bg-card rounded-2xl p-6 sm:p-8 shadow-2xl animate-slide-in space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-lg font-bold text-foreground">Privacy Policy</h3>
+              </div>
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className="p-1 rounded-lg text-muted-foreground hover:bg-muted cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+              <h4 className="font-bold text-foreground text-sm">Data Collection & Usage</h4>
+              <p>
+                Student Pocket collects and processes financial data explicitly provided by the user. 
+                When utilizing the Receipt Scanner feature, all Optical Character Recognition (OCR) 
+                is processed securely. Images uploaded are used solely for data extraction and are 
+                <strong> not permanently stored</strong> on our servers. 
+              </p>
+
+              <h4 className="font-bold text-foreground text-sm">Authentication & Firebase</h4>
+              <p>
+                We use Google Firebase for authentication and database management. Your credentials and 
+                data are encrypted in transit and at rest according to standard security policies.
+              </p>
+
+              <h4 className="font-bold text-foreground text-sm">Parental Access</h4>
+              <p>
+                Financial data is private by default. If you share a read-only token with a parent or guardian, 
+                they will only have access to the aggregated summaries and logs explicitly visible in the sharing portal. 
+                You may revoke this access at any time.
+              </p>
+
+              <p className="text-[10px] pt-4 border-t border-border">
+                Last Updated: {new Date().toLocaleDateString()}
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-border">
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/95 shadow-md transition-colors cursor-pointer"
+              >
+                I Understand
               </button>
             </div>
           </div>
