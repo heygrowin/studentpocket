@@ -5,7 +5,6 @@ import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { ArrowRight, Sparkles, Receipt, GraduationCap, MessagesSquare, LayoutDashboard, Sun, Moon, Coins, CircleDollarSign } from "lucide-react";
-<meta name="google-site-verification" content="K3H91hwvFVD5eFOWVjrdR-J3QfjoF3_evsw5n2N4xXs" />
 
 export default function LandingPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
